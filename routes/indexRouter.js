@@ -13,6 +13,7 @@ import adminRedemptionRoutes from "./admin/redemptionRoutes.js";
 
 // Customer Routes
 import customerRedemptionRoutes from "./customer/redemptionRoutes.js";
+import publicProductRoutes from "./public/productRoutes.js";
 
 const router = express.Router();
 
@@ -36,6 +37,8 @@ router.use("/admin/redemptions", adminRedemptionRoutes);
 
 router.use("/admin/audit-logs", auditLogRoutes);
 
+// Public
+router.use("/public/products", publicProductRoutes);
 
 // Customer
 router.use("/customer", customerRedemptionRoutes);

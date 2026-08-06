@@ -31,10 +31,11 @@ const verifyTokenMiddleware = async (
 
     if (!token) {
       return next(
-        new AppError(
-          `Access token is required`,
-          401
-        )
+        new AppError(`Access token is required`, 401, {
+          errors: [
+            { field: "token", message: "Access token is required" },
+          ],
+        })
       );
     }
 
@@ -65,7 +66,13 @@ export const verifyToken = (typeOrReq, res, next) => {
 export const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
-      return next(new AppError("Unauthorized access", 401));
+      return next(
+        new AppError("Unauthorized access", 401, {
+          errors: [
+            { field: "token", message: "Unauthorized access" },
+          ],
+        })
+      );
     }
 
     if (!roles.includes(req.user.role)) {

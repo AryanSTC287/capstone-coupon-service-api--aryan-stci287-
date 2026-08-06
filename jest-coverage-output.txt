@@ -1,0 +1,342 @@
+﻿
+> s7c-node-app-starter@3.0.3 test:coverage
+> cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage
+
+node.exe : (node:7452) ExperimentalWarning: VM Modules is an experimental 
+feature and might change at any time
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:7452) Exp...nge at any time 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/utils/apiFeatures.test.js
+(node:14304) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10768) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/utils/logger.test.js
+PASS tests/utils/helpers.test.js
+PASS tests/services/authUserService.test.js
+[baseline-browser-mapping] The data in this module is over two months old.  To 
+ensure accurate Baseline data, please update: `npm i 
+baseline-browser-mapping@latest -D`
+PASS tests/controllers/userController.test.js
+PASS tests/middlewares/globalErrorHandler.test.js
+  ÔùÅ Console
+
+    console.log
+      Error: boom
+          at Object.<anonymous> (C:\Users\aryan.chauhan_sevent\Desktop\coupon-r
+edemption-service\backend\tests\middlewares\globalErrorHandler.test.js:47:24)
+          at Promise.then.completed (C:\Users\aryan.chauhan_sevent\Desktop\coup
+on-redemption-service\backend\node_modules\jest-circus\build\utils.js:298:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (C:\Users\aryan.chauhan_sevent\Desktop\coupon-re
+demption-service\backend\node_modules\jest-circus\build\utils.js:231:10)
+          at _callCircusTest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-rede
+mption-service\backend\node_modules\jest-circus\build\run.js:316:40)
+          at processTicksAndRejections 
+(node:internal/process/task_queues:104:5)
+          at _runTest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-
+service\backend\node_modules\jest-circus\build\run.js:252:3)
+          at _runTestsForDescribeBlock (C:\Users\aryan.chauhan_sevent\Desktop\c
+oupon-redemption-service\backend\node_modules\jest-circus\build\run.js:126:9)
+          at _runTestsForDescribeBlock (C:\Users\aryan.chauhan_sevent\Desktop\c
+oupon-redemption-service\backend\node_modules\jest-circus\build\run.js:121:9)
+          at run (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-servi
+ce\backend\node_modules\jest-circus\build\run.js:71:3)
+          at runAndTransformResultsToJestFormat (C:\Users\aryan.chauhan_sevent\
+Desktop\coupon-redemption-service\backend\node_modules\jest-circus\build\legacy
+-code-todo-rewrite\jestAdapterInit.js:122:21)
+          at jestAdapter (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redempti
+on-service\backend\node_modules\jest-circus\build\legacy-code-todo-rewrite\jest
+Adapter.js:79:19)
+          at runTestInternal (C:\Users\aryan.chauhan_sevent\Desktop\coupon-rede
+mption-service\backend\node_modules\jest-runner\build\runTest.js:367:16)
+          at runTest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-s
+ervice\backend\node_modules\jest-runner\build\runTest.js:444:34)
+          at Object.worker (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemp
+tion-service\backend\node_modules\jest-runner\build\testWorker.js:106:12) {
+        statusCode: 500,
+        status: 'error',
+        field: null
+      }
+
+      at log (middlewares/globalErrorHandler.js:6:13)
+
+    console.log
+      {
+        isJoi: true,
+        details: [ { path: [Array], message: '"email" is required' } ],
+        name: 'ValidationError',
+        statusCode: 500,
+        status: 'error',
+        message: 'Something went wrong, Internal Server Error',
+        field: null
+      }
+
+      at log (middlewares/globalErrorHandler.js:6:13)
+
+    console.log
+      {
+        name: 'ValidationError',
+        errors: { price: { path: 'price', message: 'price is required' } },
+        statusCode: 500,
+        status: 'error',
+        message: 'Something went wrong, Internal Server Error',
+        field: null
+      }
+
+      at log (middlewares/globalErrorHandler.js:6:13)
+
+    console.log
+      {
+        code: 11000,
+        keyValue: { email: 'a@b.com' },
+        statusCode: 500,
+        status: 'error',
+        message: 'Something went wrong, Internal Server Error',
+        field: null
+      }
+
+      at log (middlewares/globalErrorHandler.js:6:13)
+
+(node:17760) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/middlewares/appSuccess.test.js
+PASS tests/services/productService.test.js
+PASS tests/middlewares/validations.test.js
+PASS tests/utils/jwt.test.js
+PASS tests/middlewares/appError.test.js
+PASS tests/controllers/productController.test.js
+[baseline-browser-mapping] The data in this module is over two months old.  To 
+ensure accurate Baseline data, please update: `npm i 
+baseline-browser-mapping@latest -D`
+(node:4688) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/middlewares/auth.test.js
+(node:16156) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/services/cronService.test.js
+  ÔùÅ Console
+
+    console.log
+      Ô£à Cron Jobs Initialized
+
+      at log (services/cronService.js:6:11)
+
+(node:19204) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL tests/integration/app.test.js (6.013 s)
+  ÔùÅ Console
+
+    console.log
+      Error [ValidationError]: "quantity" must be greater than or equal to 1
+          at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\ba
+ckend\middlewares\validations.js:11:31
+          at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-
+redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+          at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-serv
+ice\backend\node_modules\router\lib\route.js:157:13)
+          at Route.dispatch (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redem
+ption-service\backend\node_modules\router\lib\route.js:117:3)
+          at handle (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-se
+rvice\backend\node_modules\router\index.js:435:11)
+          at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-
+redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+          at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\ba
+ckend\node_modules\router\index.js:295:15
+          at param (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-ser
+vice\backend\node_modules\router\index.js:600:14)
+          at param (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-ser
+vice\backend\node_modules\router\index.js:610:14)
+          at processParams (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemp
+tion-service\backend\node_modules\router\index.js:664:3)
+          at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-serv
+ice\backend\node_modules\router\index.js:291:5)
+          at router.handle (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemp
+tion-service\backend\node_modules\router\index.js:186:3)
+          at router (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-se
+rvice\backend\node_modules\router\index.js:60:12)
+          at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-
+redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+          at trimPrefix (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemptio
+n-service\backend\node_modules\router\index.js:342:13)
+          at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\ba
+ckend\node_modules\router\index.js:297:9
+          at processParams (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemp
+tion-service\backend\node_modules\router\index.js:582:12)
+          ... collapsed 7 duplicate lines matching above lines ...
+          at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-serv
+ice\backend\node_modules\router\index.js:291:5)
+          at cookieParser (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redempt
+ion-service\backend\node_modules\cookie-parser\index.js:57:14)
+          at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-
+redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+          at trimPrefix (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemptio
+n-service\backend\node_modules\router\index.js:342:13)
+          at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\ba
+ckend\node_modules\router\index.js:297:9
+          at processParams (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemp
+tion-service\backend\node_modules\router\index.js:582:12)
+          at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-serv
+ice\backend\node_modules\router\index.js:291:5)
+          at urlencodedParser (C:\Users\aryan.chauhan_sevent\Desktop\coupon-red
+emption-service\backend\node_modules\body-parser\lib\types\urlencoded.js:57:7)
+          at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-
+redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+          at trimPrefix (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemptio
+n-service\backend\node_modules\router\index.js:342:13)
+          at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\ba
+ckend\node_modules\router\index.js:297:9
+          at processParams (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemp
+tion-service\backend\node_modules\router\index.js:582:12)
+          at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-serv
+ice\backend\node_modules\router\index.js:291:5)
+          at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\ba
+ckend\node_modules\body-parser\lib\read.js:132:5
+          at AsyncResource.runInAsyncScope (node:async_hooks:227:14)
+          at invokeCallback (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redem
+ption-service\backend\node_modules\raw-body\index.js:238:16)
+          at done (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-serv
+ice\backend\node_modules\raw-body\index.js:227:7)
+          at IncomingMessage.onEnd (C:\Users\aryan.chauhan_sevent\Desktop\coupo
+n-redemption-service\backend\node_modules\raw-body\index.js:287:7)
+          at IncomingMessage.emit (node:events:509:28)
+          at endReadableNT (node:internal/streams/readable:1729:12)
+          at processTicksAndRejections 
+(node:internal/process/task_queues:90:21) {
+        statusCode: 400,
+        details: [
+          {
+            message: '"quantity" must be greater than or equal to 1',
+            path: [Array],
+            type: 'number.min',
+            context: [Object]
+          }
+        ],
+        isJoi: true,
+        status: 'error',
+        field: null
+      }
+
+      at log (middlewares/globalErrorHandler.js:6:13)
+
+  ÔùÅ app integration ÔÇ║ admin routes should reject requests without a token 
+(401)
+
+    TypeError: Cannot read properties of undefined (reading 'field')
+
+    [0m [90m 82 |[39m     [36mconst[39m res [33m=[39m [36mawait[39m re
+quest(app)[33m.[39m[36mget[39m([32m"/api/admin/products"[39m)[33m;[39m
+     [90m 83 |[39m     
+expect(res[33m.[39mstatus)[33m.[39mtoBe([35m401[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 84 |[39m     expect(res[33m.[39mbody[33m.[39
+merrors[[35m0[39m][33m.[39mfield)[33m.[39mtoBe([32m"token"[39m)[33m;[
+39m
+     [90m    |[39m                               [31m[1m^[22m[39m
+     [90m 85 |[39m   })[33m;[39m
+     [90m 86 |[39m
+     [90m 87 |[39m   it([32m"admin routes should allow an authenticated 
+caller"[39m[33m,[39m [36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> (tests/integration/app.test.js:84:31)
+
+  ÔùÅ app integration ÔÇ║ admin routes should allow an authenticated caller
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 403
+
+    [0m [90m  98 |[39m       
+[33m.[39m[36mset[39m([32m"Authorization"[39m[33m,[39m [32m`Bearer 
+${token}`[39m)[33m;[39m
+     [90m  99 |[39m
+    [31m[1m>[22m[39m[90m 100 |[39m     
+expect(res[33m.[39mstatus)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                        [31m[1m^[22m[39m
+     [90m 101 |[39m     expect(res[33m.[39mbody[33m.[39mstatus)[33m.[39
+mtoBe([32m"success"[39m)[33m;[39m
+     [90m 102 |[39m   })[33m;[39m
+     [90m 103 |[39m })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/integration/app.test.js:100:24)
+
+--------------------------|---------|----------|---------|---------|---------------------------------
+File                      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s               
+--------------------------|---------|----------|---------|---------|---------------------------------
+All files                 |   56.46 |     51.5 |   52.34 |   56.34 |                                 
+ controllers              |   43.65 |    16.66 |   39.47 |   43.65 |                                 
+  analyticsController.js  |      20 |      100 |       0 |      20 | 13-24,38-49                     
+  auditLogController.js   |      20 |      100 |       0 |      20 | 10-18,28-39                     
+  authController.js       |   18.18 |      100 |       0 |   18.18 | 12-21,29-40,48-58,65-73         
+  couponController.js     |      20 |      100 |       0 |      20 | 10-24,34-44,54-66,76-91,101-115 
+  csvExportController.js  |   14.28 |      100 |       0 |   14.28 | 8-24                            
+  csvImportController.js  |   14.28 |        0 |       0 |   14.28 | 9-26                            
+  importController.js     |   16.66 |        0 |       0 |   16.66 | 9-24,33-42                      
+  productController.js    |      80 |      100 |     100 |      80 | 12,25,37,52,64,79               
+  redemptionController.js |      20 |      100 |       0 |      20 | 10-22,32-43,53-62,72-84         
+  userController.js       |   75.92 |       50 |   81.81 |   75.92 | 7,25,42,55,68,100-108,146-155   
+ middlewares              |   85.58 |     80.2 |   93.33 |   85.32 |                                 
+  appError.js             |     100 |    83.33 |     100 |     100 | 2                               
+  appSuccess.js           |   83.33 |    44.44 |     100 |   83.33 | 21                              
+  auth.js                 |   93.54 |     82.6 |     100 |   93.54 | 68,75                           
+  globalErrorHandler.js   |   80.43 |    86.53 |     100 |   79.54 | 39-47,67-75,80-88               
+  upload.js               |   42.85 |        0 |       0 |   42.85 | 8-17                            
+  validations.js          |     100 |      100 |     100 |     100 |                                 
+ routes                   |     100 |      100 |     100 |     100 |                                 
+  authRoutes.js           |     100 |      100 |     100 |     100 |                                 
+  indexRouter.js          |     100 |      100 |     100 |     100 |                                 
+ routes/admin             |     100 |      100 |     100 |     100 |                                 
+  analyticsRoutes.js      |     100 |      100 |     100 |     100 |                                 
+  auditLogRoutes.js       |     100 |      100 |     100 |     100 |                                 
+  couponRoutes.js         |     100 |      100 |     100 |     100 |                                 
+  importRoutes.js         |     100 |      100 |     100 |     100 |                                 
+  productRoutes.js        |     100 |      100 |     100 |     100 |                                 
+  redemptionRoutes.js     |     100 |      100 |     100 |     100 |                                 
+  userRoutes.js           |     100 |      100 |     100 |     100 |                                 
+ routes/customer          |     100 |      100 |     100 |     100 |                                 
+  redemptionRoutes.js     |     100 |      100 |     100 |     100 |                                 
+ routes/public            |     100 |      100 |     100 |     100 |                                 
+  productRoutes.js        |     100 |      100 |     100 |     100 |                                 
+ services                 |   36.08 |    31.54 |   30.18 |   36.28 |                                 
+  analyticsService.js     |      40 |        0 |       0 |      40 | 11-35,48                        
+  auditLogService.js      |   33.33 |        0 |       0 |   33.33 | 15,29,38-48                     
+  authService.js          |    8.51 |        0 |       0 |    8.51 | 18-58,67-102,109-121,129-139    
+  authUserService.js      |   90.24 |    81.48 |     100 |   90.24 | 23,90,107,116                   
+  couponService.js        |   11.11 |        0 |       0 |   11.11 | 12-36,41,50-59,69-137,146-170   
+  cronService.js          |   41.66 |        0 |      25 |   41.66 | 10-32,41,46                     
+  csvExportService.js     |   16.66 |        0 |       0 |      20 | 6-30                            
+  csvImportService.js     |    4.54 |        0 |       0 |    4.54 | 10-72                           
+  importService.js        |    3.92 |        0 |       0 |       4 | 9-124,130                       
+  productService.js       |     100 |    94.44 |     100 |     100 | 81                              
+  redemptionService.js    |    7.84 |        0 |       0 |    7.84 | 22-175,184,199,221-281          
+  userService.js          |   81.08 |    82.35 |   83.33 |   81.08 | 82,90-100                       
+ utils                    |     100 |    79.31 |     100 |     100 |                                 
+  apiFeatures.js          |     100 |      100 |     100 |     100 |                                 
+  helpers.js              |     100 |      100 |     100 |     100 |                                 
+  jwt.js                  |     100 |       50 |     100 |     100 | 27-99                           
+  logger.js               |     100 |      100 |     100 |     100 |                                 
+ utils/validationSchemas  |   91.66 |      100 |     100 |   91.66 |                                 
+  authSchema.js           |     100 |      100 |     100 |     100 |                                 
+  couponSchema.js         |     100 |      100 |     100 |     100 |                                 
+  importSchema.js         |       0 |      100 |     100 |       0 | 3                               
+  productSchema.js        |     100 |      100 |     100 |     100 |                                 
+  redemptionSchema.js     |     100 |      100 |     100 |     100 |                                 
+  userSchema.js           |     100 |      100 |     100 |     100 |                                 
+--------------------------|---------|----------|---------|---------|---------------------------------
+Test Suites: 1 failed, 14 passed, 15 total
+Tests:       2 failed, 93 passed, 95 total
+Snapshots:   0 total
+Time:        7.916 s
+Ran all test suites.

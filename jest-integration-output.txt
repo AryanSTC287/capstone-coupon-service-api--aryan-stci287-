@@ -1,0 +1,83 @@
+﻿node.exe : (node:8840) ExperimentalWarning: VM Modules is an experimental 
+feature and might change at any time
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:8840) Exp...nge at any time 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+  console.log
+    Error [ValidationError]: "quantity" must be greater than or equal to 1
+        at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\middlewares\validations.js:11:31
+        at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+        at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\lib\route.js:157:13)
+        at Route.dispatch (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\lib\route.js:117:3)
+        at handle (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:435:11)
+        at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+        at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:295:15
+        at param (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:600:14)
+        at param (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:610:14)
+        at processParams (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:664:3)
+        at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:291:5)
+        at router.handle (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:186:3)
+        at router (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:60:12)
+        at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:342:13)
+        at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:297:9
+        at processParams (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:582:12)
+        ... collapsed 7 duplicate lines matching above lines ...
+        at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:291:5)
+        at cookieParser (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\cookie-parser\index.js:57:14)
+        at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:342:13)
+        at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:297:9
+        at processParams (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:582:12)
+        at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:291:5)
+        at urlencodedParser (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\body-parser\lib\types\urlencoded.js:57:7)
+        at Layer.handleRequest (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:342:13)
+        at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:297:9
+        at processParams (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:582:12)
+        at next (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\router\index.js:291:5)
+        at C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\body-parser\lib\read.js:132:5
+        at AsyncResource.runInAsyncScope (node:async_hooks:227:14)
+        at invokeCallback (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\raw-body\index.js:238:16)
+        at done (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\raw-body\index.js:227:7)
+        at IncomingMessage.onEnd (C:\Users\aryan.chauhan_sevent\Desktop\coupon-redemption-service\backend\node_modules\raw-body\index.js:287:7)
+        at IncomingMessage.emit (node:events:509:28)
+        at endReadableNT (node:internal/streams/readable:1729:12)
+        at processTicksAndRejections (node:internal/process/task_queues:90:21) {
+      statusCode: 400,
+      details: [
+        {
+          message: '"quantity" must be greater than or equal to 1',
+          path: [Array],
+          type: 'number.min',
+          context: [Object]
+        }
+      ],
+      isJoi: true,
+      status: 'error',
+      field: null
+    }
+
+      at sendError (middlewares/globalErrorHandler.js:6:13)
+
+PASS tests/integration/app.test.js
+  app integration
+    ÔêÜ GET /healthcheck should return 200 (29 ms)
+    ÔêÜ unknown routes should hit the 404 error handler with the error 
+envelope (12 ms)
+    ÔêÜ public product list should return the success envelope (7 ms)
+    ÔêÜ purchase should reject an invalid quantity via validation (400) (42 ms)
+    ÔêÜ purchase should succeed with a valid quantity (7 ms)
+    ÔêÜ admin routes should reject requests without a token (401) (5 ms)
+    ÔêÜ admin routes should allow an authenticated caller (8 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       7 passed, 7 total
+Snapshots:   0 total
+Time:        1.809 s, estimated 5 s
+Ran all test suites matching /tests\\integration\\app.test.js/i.

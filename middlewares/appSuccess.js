@@ -1,4 +1,4 @@
-const appSuccess = (
+function AppSuccess(
   res,
   {
     statusCode = 200,
@@ -6,9 +6,10 @@ const appSuccess = (
     data = null,
     meta = null,
   } = {}
-) => {
+) {
   const response = {
-    success: true,
+    responseCode: 0,
+    status: "success",
     message,
   };
 
@@ -21,6 +22,6 @@ const appSuccess = (
   }
 
   return res.status(statusCode).json(response);
-};
+}
 
-export default appSuccess;
+export default AppSuccess;

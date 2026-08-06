@@ -25,7 +25,7 @@ describe("validateRequest middleware", () => {
 
     expect(schema.validate).toHaveBeenCalledWith(
       { name: "raw" },
-      { abortEarly: false }
+      { abortEarly: false, stripUnknown: true }
     );
     expect(req.body).toEqual({ name: "clean", extra: true });
     expect(next).toHaveBeenCalledWith();

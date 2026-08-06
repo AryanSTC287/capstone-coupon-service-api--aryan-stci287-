@@ -8,7 +8,12 @@ export const validate = (schema) => {
     });
 
     if (error) {
-      return next(error);
+      const validationError = new Error(error.message);
+      validationError.name = "ValidationError";
+      validationError.statusCode = 400;
+      validationError.details = error.details;
+      validationError.isJoi = error.isJoi || true;
+      return next(validationError);
     }
 
     req.body = value;

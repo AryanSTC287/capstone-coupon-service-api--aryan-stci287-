@@ -155,3 +155,5 @@ export const deactivateUserController = async (
     next(error);
   }
 };
+
+export { createUserController as createUser, getUserByIdController as getUserById, updateUserController as updateUser };

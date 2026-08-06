@@ -15,10 +15,10 @@ describe("cronService", () => {
   it("should schedule the configured cron jobs on initialize", () => {
     initializeCrons();
 
-    expect(cron.schedule).toHaveBeenCalledTimes(2);
+    expect(cron.schedule).toHaveBeenCalledTimes(3);
     const expressions = cron.schedule.mock.calls.map((call) => call[0]);
     expect(expressions).toEqual(
-      expect.arrayContaining(["0 * * * *", "0 0 * * *"])
+      expect.arrayContaining(["* * * * *", "0 * * * *", "0 0 * * *"])
     );
   });
 });
