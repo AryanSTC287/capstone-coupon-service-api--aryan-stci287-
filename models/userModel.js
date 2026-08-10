@@ -68,10 +68,7 @@ userSchema.pre("save", async function (next) {
     return next();
   }
 
-  this.password = await bcrypt.hash(
-    this.password,
-    12
-  );
+  this.password = await bcrypt.hash(this.password, 12);
 
   next();
 });
@@ -79,10 +76,7 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.comparePassword = async function (
   candidatePassword
 ) {
-  return bcrypt.compare(
-    candidatePassword,
-    this.password
-  );
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 const User = model("User", userSchema);

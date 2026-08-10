@@ -1,18 +1,40 @@
 import User from "../models/userModel.js";
 import AppError from "../middlewares/appError.js";
 
-/**
- * Create User
- */
+const buildName = (payload) => {
+  if (payload.name !== undefined) {
+    return payload.name?.trim();
+  }
+
+  const firstName = payload.firstName?.trim() || "";
+  const lastName = payload.lastName?.trim() || "";
+
+  return `${firstName} ${lastName}`.trim();
+};
+
 export const createUser = async (payload) => {
   if (!payload) {
     throw new AppError("User data is required", 400);
+  }
+
+  const name = buildName(payload);
+
+  if (!name) {
+    throw new AppError("Name is required", 400);
   }
 
   const email = payload.email?.trim().toLowerCase();
 
   if (!email) {
     throw new AppError("Email is required", 400);
+  }
+
+  if (!payload.phone?.trim()) {
+    throw new AppError("Phone number is required", 400);
+  }
+
+  if (!payload.password) {
+    throw new AppError("Password is required", 400);
   }
 
   const existingUser = await User.findOne({
@@ -23,22 +45,10 @@ export const createUser = async (payload) => {
     throw new AppError("User already exists", 409);
   }
 
-  const name = `${payload.firstName || ""} ${
-    payload.lastName || ""
-  }`.trim();
-
-  if (!name) {
-    throw new AppError("Name is required", 400);
-  }
-
-  if (!payload.password) {
-    throw new AppError("Password is required", 400);
-  }
-
   const user = await User.create({
     name,
     email,
-    phone: payload.phone?.trim() || "",
+    phone: payload.phone.trim(),
     password: payload.password,
     role: payload.role || "CUSTOMER",
     status: payload.status || "ACTIVE",
@@ -47,9 +57,6 @@ export const createUser = async (payload) => {
   return user;
 };
 
-/**
- * Get All Users
- */
 export const getUsers = async (filters = {}) => {
   const page = parseInt(filters.page, 10) || 1;
   const limit = parseInt(filters.limit, 10) || 10;
@@ -72,13 +79,11 @@ export const getUsers = async (filters = {}) => {
       totalCount,
       page,
       limit,
+      totalPages: Math.ceil(totalCount / limit),
     },
   };
 };
 
-/**
- * Get User By Id
- */
 export const getUserById = async (id) => {
   if (!id) {
     throw new AppError("User id is required", 400);
@@ -93,9 +98,6 @@ export const getUserById = async (id) => {
   return user;
 };
 
-/**
- * Update User
- */
 export const updateUser = async (id, payload) => {
   if (!id) {
     throw new AppError("User id is required", 400);
@@ -105,18 +107,20 @@ export const updateUser = async (id, payload) => {
     throw new AppError("User data is required", 400);
   }
 
+  const existingUser = await User.findById(id);
+
+  if (!existingUser) {
+    throw new AppError("User not found", 404);
+  }
+
   const updateData = {};
 
-  if (payload.firstName !== undefined || payload.lastName !== undefined) {
-    const existingUser = await User.findById(id);
-
-    if (!existingUser) {
-      throw new AppError("User not found", 404);
-    }
-
-    const name = `${payload.firstName || ""} ${
-      payload.lastName || ""
-    }`.trim();
+  if (
+    payload.name !== undefined ||
+    payload.firstName !== undefined ||
+    payload.lastName !== undefined
+  ) {
+    const name = buildName(payload);
 
     if (!name) {
       throw new AppError("Name is required", 400);
@@ -126,11 +130,23 @@ export const updateUser = async (id, payload) => {
   }
 
   if (payload.email !== undefined) {
-    updateData.email = payload.email.trim().toLowerCase();
+    const email = payload.email?.trim().toLowerCase();
+
+    if (!email) {
+      throw new AppError("Email is required", 400);
+    }
+
+    updateData.email = email;
   }
 
   if (payload.phone !== undefined) {
-    updateData.phone = payload.phone.trim();
+    const phone = payload.phone?.trim();
+
+    if (!phone) {
+      throw new AppError("Phone number is required", 400);
+    }
+
+    updateData.phone = phone;
   }
 
   if (payload.role !== undefined) {
@@ -145,15 +161,13 @@ export const updateUser = async (id, payload) => {
     updateData.password = payload.password;
   }
 
-  if (
-    updateData.email !== undefined
-  ) {
-    const existingUser = await User.findOne({
+  if (updateData.email !== undefined) {
+    const emailExists = await User.findOne({
       email: updateData.email,
       _id: { $ne: id },
     });
 
-    if (existingUser) {
+    if (emailExists) {
       throw new AppError("User already exists", 409);
     }
   }
@@ -174,9 +188,6 @@ export const updateUser = async (id, payload) => {
   return user;
 };
 
-/**
- * Delete User
- */
 export const deleteUser = async (id) => {
   if (!id) {
     throw new AppError("User id is required", 400);
@@ -191,9 +202,6 @@ export const deleteUser = async (id) => {
   return user;
 };
 
-/**
- * Deactivate User
- */
 export const deactivateUser = async (id) => {
   if (!id) {
     throw new AppError("User id is required", 400);

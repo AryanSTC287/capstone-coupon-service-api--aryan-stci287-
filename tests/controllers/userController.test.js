@@ -1,22 +1,23 @@
 import { jest } from "@jest/globals";
 
-// Mock all dependencies before importing
-jest.unstable_mockModule("../../utils/helpers.js", () => ({
-  catchAsync: jest.fn((fn) => async (req, res, next) => {
-    try {
-      return await fn(req, res, next);
-    } catch (error) {
-      throw error;
-    }
-  }),
-}));
-
 jest.unstable_mockModule("../../middlewares/appSuccess.js", () => ({
   default: jest.fn(),
 }));
 
 jest.unstable_mockModule("../../middlewares/appError.js", () => ({
-  default: jest.fn(),
+  default: class AppError extends Error {
+    constructor(message, statusCode = 500, options = {}) {
+      super(message);
+
+      this.statusCode = statusCode;
+      this.status = `${statusCode}`.startsWith("4")
+        ? "fail"
+        : "error";
+      this.responseCode = options.responseCode || 1;
+      this.errors = options.errors || [];
+      this.isOperational = true;
+    }
+  },
 }));
 
 jest.unstable_mockModule("../../models/userModel.js", () => ({
@@ -37,11 +38,17 @@ jest.unstable_mockModule("../../services/authUserService.js", () => ({
   refreshUserAccessTokenService: jest.fn(),
 }));
 
-// Import after mocking
-const AppSuccess = (await import("../../middlewares/appSuccess.js")).default;
-const AppError = (await import("../../middlewares/appError.js")).default;
-const User = (await import("../../models/userModel.js")).default;
-const { loginUserService, logoutUserService, refreshUserAccessTokenService } =
+const AppSuccess =
+  (await import("../../middlewares/appSuccess.js")).default;
+
+const User =
+  (await import("../../models/userModel.js")).default;
+
+const {
+  loginUserService,
+  logoutUserService,
+  refreshUserAccessTokenService,
+} =
   await import("../../services/authUserService.js");
 
 const {
@@ -53,10 +60,12 @@ const {
   getUserById,
   updateUser,
   deleteUser,
-} = await import("../../controllers/userController.js");
+} =
+  await import("../../controllers/userController.js");
 
 describe("UserController Tests", () => {
-  let req, res;
+  let req;
+  let res;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -65,7 +74,9 @@ describe("UserController Tests", () => {
       body: {},
       params: {},
       query: {},
-      user: { id: "user123" },
+      user: {
+        id: "user123",
+      },
       refreshToken: "refresh-token-123",
     };
 
@@ -81,10 +92,17 @@ describe("UserController Tests", () => {
       const mockResponse = {
         accessToken: "access-token",
         refreshToken: "refresh-token",
-        user: { id: "user123", email: "test@example.com" },
+        user: {
+          id: "user123",
+          email: "test@example.com",
+        },
       };
 
-      req.body = { identifier: "test@example.com", password: "password123" };
+      req.body = {
+        identifier: "test@example.com",
+        password: "password123",
+      };
+
       loginUserService.mockResolvedValue(mockResponse);
 
       await loginUser(req, res);
@@ -94,6 +112,7 @@ describe("UserController Tests", () => {
         "password123",
         res
       );
+
       expect(AppSuccess).toHaveBeenCalledWith(res, {
         message: "User login successfully",
         data: mockResponse,
@@ -103,34 +122,49 @@ describe("UserController Tests", () => {
 
   describe("refreshUserAccessToken", () => {
     it("should refresh access token successfully", async () => {
-      const mockResponse = { accessToken: "new-access-token" };
-      refreshUserAccessTokenService.mockResolvedValue(mockResponse);
+      const mockResponse = {
+        accessToken: "new-access-token",
+      };
+
+      refreshUserAccessTokenService.mockResolvedValue(
+        mockResponse
+      );
 
       await refreshUserAccessToken(req, res);
 
-      expect(refreshUserAccessTokenService).toHaveBeenCalledWith(
+      expect(
+        refreshUserAccessTokenService
+      ).toHaveBeenCalledWith(
         "refresh-token-123",
         req.user,
         res
       );
+
       expect(AppSuccess).toHaveBeenCalledWith(res, {
         message: "Access token refreshed successfully",
-        data: { accessToken: "new-access-token" },
+        data: mockResponse,
       });
     });
   });
 
   describe("logoutUser", () => {
     it("should logout user successfully", async () => {
-      const mockResponse = { deleted: true };
+      const mockResponse = {
+        deleted: true,
+      };
+
       logoutUserService.mockResolvedValue(mockResponse);
 
       await logoutUser(req, res);
 
-      expect(logoutUserService).toHaveBeenCalledWith(req.user, res);
+      expect(logoutUserService).toHaveBeenCalledWith(
+        req.user,
+        res
+      );
+
       expect(AppSuccess).toHaveBeenCalledWith(res, {
         message: "User logged out successfully",
-        data: { deleted: true },
+        data: mockResponse,
       });
     });
   });
@@ -138,13 +172,20 @@ describe("UserController Tests", () => {
   describe("getAllUsers", () => {
     it("should get all users with default pagination", async () => {
       const mockUsers = [
-        { id: "1", name: "User 1", email: "user1@example.com" },
-        { id: "2", name: "User 2", email: "user2@example.com" },
+        {
+          id: "1",
+          name: "User 1",
+          email: "user1@example.com",
+        },
+        {
+          id: "2",
+          name: "User 2",
+          email: "user2@example.com",
+        },
       ];
 
       const mockQuery = {
         sort: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockResolvedValue(mockUsers),
       };
@@ -152,9 +193,20 @@ describe("UserController Tests", () => {
       User.find.mockReturnValue(mockQuery);
       User.countDocuments.mockResolvedValue(25);
 
+      req.query = {};
+
       await getAllUsers(req, res);
 
       expect(User.find).toHaveBeenCalledWith({});
+
+      expect(mockQuery.sort).toHaveBeenCalledWith({
+        createdAt: -1,
+      });
+
+      expect(mockQuery.skip).toHaveBeenCalledWith(0);
+
+      expect(mockQuery.limit).toHaveBeenCalledWith(10);
+
       expect(AppSuccess).toHaveBeenCalledWith(res, {
         message: "Users fetched successfully",
         data: {
@@ -163,6 +215,49 @@ describe("UserController Tests", () => {
             totalCount: 25,
             page: 1,
             limit: 10,
+            totalPages: 3,
+          },
+        },
+      });
+    });
+
+    it("should support custom pagination", async () => {
+      const mockUsers = [
+        {
+          id: "11",
+          name: "User 11",
+          email: "user11@example.com",
+        },
+      ];
+
+      const mockQuery = {
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockResolvedValue(mockUsers),
+      };
+
+      User.find.mockReturnValue(mockQuery);
+      User.countDocuments.mockResolvedValue(21);
+
+      req.query = {
+        page: "2",
+        limit: "10",
+      };
+
+      await getAllUsers(req, res);
+
+      expect(mockQuery.skip).toHaveBeenCalledWith(10);
+      expect(mockQuery.limit).toHaveBeenCalledWith(10);
+
+      expect(AppSuccess).toHaveBeenCalledWith(res, {
+        message: "Users fetched successfully",
+        data: {
+          users: mockUsers,
+          pagination: {
+            totalCount: 21,
+            page: 2,
+            limit: 10,
+            totalPages: 3,
           },
         },
       });
@@ -176,26 +271,34 @@ describe("UserController Tests", () => {
         email: "john@example.com",
         phone: "1234567890",
         password: "password123",
+        role: "CUSTOMER",
+        status: "ACTIVE",
       };
 
       User.findOne.mockResolvedValue(null);
-      const mockCreatedUser = { id: "user123", ...req.body };
+
+      const mockCreatedUser = {
+        id: "user123",
+        ...req.body,
+      };
+
       User.create.mockResolvedValue(mockCreatedUser);
-      AppError.mockImplementation((message, code, details) => {
-        const error = new Error(message);
-        error.statusCode = code;
-        error.errors = details.errors;
-        return error;
-      });
+
       await createUser(req, res);
 
-      expect(User.findOne).toHaveBeenCalledWith({ email: "john@example.com" });
+      expect(User.findOne).toHaveBeenCalledWith({
+        email: "john@example.com",
+      });
+
       expect(User.create).toHaveBeenCalledWith({
         name: "John Doe",
         email: "john@example.com",
         phone: "1234567890",
         password: "password123",
+        role: "CUSTOMER",
+        status: "ACTIVE",
       });
+
       expect(AppSuccess).toHaveBeenCalledWith(res, {
         statusCode: 201,
         message: "User created successfully",
@@ -203,33 +306,112 @@ describe("UserController Tests", () => {
       });
     });
 
+    it("should create CUSTOMER by default", async () => {
+      req.body = {
+        name: "John Doe",
+        email: "john@example.com",
+        phone: "1234567890",
+        password: "password123",
+      };
+
+      User.findOne.mockResolvedValue(null);
+
+      const mockCreatedUser = {
+        id: "user123",
+        name: "John Doe",
+        email: "john@example.com",
+        phone: "1234567890",
+        password: "password123",
+        role: "CUSTOMER",
+        status: "ACTIVE",
+      };
+
+      User.create.mockResolvedValue(mockCreatedUser);
+
+      await createUser(req, res);
+
+      expect(User.create).toHaveBeenCalledWith({
+        name: "John Doe",
+        email: "john@example.com",
+        phone: "1234567890",
+        password: "password123",
+        role: "CUSTOMER",
+        status: "ACTIVE",
+      });
+    });
+
     it("should throw error if user already exists", async () => {
-      req.body = { email: "existing@example.com" };
-      User.findOne.mockResolvedValue({ id: "existing-user" });
-      AppError.mockImplementation((message, code, details) => {
-        const error = new Error(message);
-        error.statusCode = code;
-        error.errors = details.errors;
-        return error;
+      req.body = {
+        name: "Existing User",
+        email: "existing@example.com",
+        phone: "1234567890",
+        password: "password123",
+      };
+
+      User.findOne.mockResolvedValue({
+        id: "existing-user",
       });
 
-      await expect(createUser(req, res)).rejects.toThrow();
+      await expect(
+        createUser(req, res)
+      ).rejects.toThrow("User already exists");
+    });
+
+    it("should throw error if name is missing", async () => {
+      req.body = {
+        email: "john@example.com",
+        phone: "1234567890",
+        password: "password123",
+      };
+
+      await expect(
+        createUser(req, res)
+      ).rejects.toThrow("Name is required");
+    });
+
+    it("should throw error if email is missing", async () => {
+      req.body = {
+        name: "John Doe",
+        phone: "1234567890",
+        password: "password123",
+      };
+
+      await expect(
+        createUser(req, res)
+      ).rejects.toThrow("Email is required");
+    });
+
+    it("should throw error if password is missing", async () => {
+      req.body = {
+        name: "John Doe",
+        email: "john@example.com",
+        phone: "1234567890",
+      };
+
+      await expect(
+        createUser(req, res)
+      ).rejects.toThrow("Password is required");
     });
   });
 
   describe("getUserById", () => {
     it("should get user by id successfully", async () => {
       req.params.id = "user123";
+
       const mockUser = {
         id: "user123",
         name: "John Doe",
         email: "john@example.com",
       };
+
       User.findById.mockResolvedValue(mockUser);
 
       await getUserById(req, res);
 
-      expect(User.findById).toHaveBeenCalledWith("user123");
+      expect(User.findById).toHaveBeenCalledWith(
+        "user123"
+      );
+
       expect(AppSuccess).toHaveBeenCalledWith(res, {
         message: "User fetched successfully",
         data: mockUser,
@@ -238,83 +420,187 @@ describe("UserController Tests", () => {
 
     it("should throw error if id is not provided", async () => {
       req.params = {};
-      AppError.mockImplementation((message, code, details) => {
-        const error = new Error(message);
-        error.statusCode = code;
-        error.errors = details.errors;
-        return error;
-      });
-      await expect(getUserById(req, res)).rejects.toThrow();
+
+      await expect(
+        getUserById(req, res)
+      ).rejects.toThrow("User id is required");
+    });
+
+    it("should throw error if user is not found", async () => {
+      req.params.id = "nonexistent";
+
+      User.findById.mockResolvedValue(null);
+
+      await expect(
+        getUserById(req, res)
+      ).rejects.toThrow("User not found");
     });
   });
 
   describe("updateUser", () => {
     it("should update user successfully", async () => {
       req.params.id = "user123";
-      req.body = { name: "Updated Name", email: "updated@example.com" };
-      const mockUpdatedUser = { id: "user123", ...req.body };
-      User.findByIdAndUpdate.mockResolvedValue(mockUpdatedUser);
 
-      AppError.mockImplementation((message, code, details) => {
-        const error = new Error(message);
-        error.statusCode = code;
-        error.errors = details.errors;
-        return error;
-      });
+      req.body = {
+        name: "Updated Name",
+        email: "updated@example.com",
+        phone: "9999999999",
+      };
+
+      const existingUser = {
+        id: "user123",
+        name: "Old Name",
+        email: "old@example.com",
+      };
+
+      const mockUpdatedUser = {
+        id: "user123",
+        ...req.body,
+      };
+
+      User.findById.mockResolvedValue(existingUser);
+      User.findOne.mockResolvedValue(null);
+      User.findByIdAndUpdate.mockResolvedValue(
+        mockUpdatedUser
+      );
+
       await updateUser(req, res);
 
-      expect(User.findByIdAndUpdate).toHaveBeenCalledWith("user123", req.body, {
-        new: true,
-      });
+      expect(User.findById).toHaveBeenCalledWith(
+        "user123"
+      );
+
+      expect(User.findByIdAndUpdate).toHaveBeenCalledWith(
+        "user123",
+        {
+          name: "Updated Name",
+          email: "updated@example.com",
+          phone: "9999999999",
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
       expect(AppSuccess).toHaveBeenCalledWith(res, {
         message: "User updated successfully",
         data: mockUpdatedUser,
       });
     });
 
-    it("should throw error if user not found", async () => {
-      req.params.id = "nonexistent";
-      req.body = { name: "Updated Name" };
-      User.findByIdAndUpdate.mockResolvedValue(null);
-      AppError.mockImplementation((message, code, details) => {
-        const error = new Error(message);
-        error.statusCode = code;
-        error.errors = details.errors;
-        return error;
+    it("should update firstName and lastName into name", async () => {
+      req.params.id = "user123";
+
+      req.body = {
+        firstName: "John",
+        lastName: "Doe",
+      };
+
+      User.findById.mockResolvedValue({
+        id: "user123",
+        name: "Old Name",
       });
-      await expect(updateUser(req, res)).rejects.toThrow();
+
+      User.findByIdAndUpdate.mockResolvedValue({
+        id: "user123",
+        name: "John Doe",
+      });
+
+      await updateUser(req, res);
+
+      expect(User.findByIdAndUpdate).toHaveBeenCalledWith(
+        "user123",
+        {
+          name: "John Doe",
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+    });
+
+    it("should throw error if user is not found", async () => {
+      req.params.id = "nonexistent";
+
+      req.body = {
+        name: "Updated Name",
+      };
+
+      User.findById.mockResolvedValue(null);
+
+      await expect(
+        updateUser(req, res)
+      ).rejects.toThrow("User not found");
+    });
+
+    it("should throw error if email already exists", async () => {
+      req.params.id = "user123";
+
+      req.body = {
+        email: "existing@example.com",
+      };
+
+      User.findById.mockResolvedValue({
+        id: "user123",
+        name: "John Doe",
+      });
+
+      User.findOne.mockResolvedValue({
+        id: "another-user",
+        email: "existing@example.com",
+      });
+
+      await expect(
+        updateUser(req, res)
+      ).rejects.toThrow("User already exists");
     });
   });
 
   describe("deleteUser", () => {
     it("should delete user successfully", async () => {
       req.params.id = "user123";
-      const mockDeletedUser = { id: "user123", name: "John Doe" };
-      User.findByIdAndDelete.mockResolvedValue(mockDeletedUser);
-      AppError.mockImplementation((message, code, details) => {
-        const error = new Error(message);
-        error.statusCode = code;
-        error.errors = details.errors;
-        return error;
-      });
+
+      const mockDeletedUser = {
+        id: "user123",
+        name: "John Doe",
+      };
+
+      User.findByIdAndDelete.mockResolvedValue(
+        mockDeletedUser
+      );
+
       await deleteUser(req, res);
 
-      expect(User.findByIdAndDelete).toHaveBeenCalledWith("user123");
+      expect(
+        User.findByIdAndDelete
+      ).toHaveBeenCalledWith("user123");
+
       expect(AppSuccess).toHaveBeenCalledWith(res, {
         message: "User deleted successfully",
-        data: { deleted: mockDeletedUser },
+        data: {
+          deleted: mockDeletedUser,
+        },
       });
     });
 
     it("should throw error if id is not provided", async () => {
       req.params = {};
-      AppError.mockImplementation((message, code, details) => {
-        const error = new Error(message);
-        error.statusCode = code;
-        error.errors = details.errors;
-        return error;
-      });
-      await expect(deleteUser(req, res)).rejects.toThrow();
+
+      await expect(
+        deleteUser(req, res)
+      ).rejects.toThrow("User id is required");
+    });
+
+    it("should throw error if user is not found", async () => {
+      req.params.id = "nonexistent";
+
+      User.findByIdAndDelete.mockResolvedValue(null);
+
+      await expect(
+        deleteUser(req, res)
+      ).rejects.toThrow("User not found");
     });
   });
 });

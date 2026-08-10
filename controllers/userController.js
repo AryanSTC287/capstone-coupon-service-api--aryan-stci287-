@@ -6,6 +6,7 @@ const handleControllerError = (error, next) => {
   if (next) {
     return next(error);
   }
+
   throw error;
 };
 
@@ -28,11 +29,12 @@ export const loginUser = async (req, res, next) => {
 
 export const refreshUserAccessToken = async (req, res, next) => {
   try {
-    const result = await authUserService.refreshUserAccessTokenService(
-      req.refreshToken,
-      req.user,
-      res
-    );
+    const result =
+      await authUserService.refreshUserAccessTokenService(
+        req.refreshToken,
+        req.user,
+        res
+      );
 
     appSuccess(res, {
       message: "Access token refreshed successfully",
@@ -45,7 +47,10 @@ export const refreshUserAccessToken = async (req, res, next) => {
 
 export const logoutUser = async (req, res, next) => {
   try {
-    const result = await authUserService.logoutUserService(req.user, res);
+    const result = await authUserService.logoutUserService(
+      req.user,
+      res
+    );
 
     appSuccess(res, {
       message: "User logged out successfully",
@@ -58,7 +63,20 @@ export const logoutUser = async (req, res, next) => {
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await userService.getUsers();
+    const users = await userService.getUsers(req.query);
+
+    appSuccess(res, {
+      message: "Users fetched successfully",
+      data: users,
+    });
+  } catch (error) {
+    handleControllerError(error, next);
+  }
+};
+
+export const getUsersController = async (req, res, next) => {
+  try {
+    const users = await userService.getUsers(req.query);
 
     appSuccess(res, {
       message: "Users fetched successfully",
@@ -83,32 +101,6 @@ export const createUserController = async (req, res, next) => {
   }
 };
 
-export const deleteUser = async (req, res, next) => {
-  try {
-    const deletedUser = await userService.deleteUser(req.params.id);
-
-    appSuccess(res, {
-      message: "User deleted successfully",
-      data: { deleted: deletedUser },
-    });
-  } catch (error) {
-    handleControllerError(error, next);
-  }
-};
-
-export const getUsersController = async (req, res, next) => {
-  try {
-    const users = await userService.getUsers();
-
-    appSuccess(res, {
-      message: "Users fetched successfully",
-      data: users,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const getUserByIdController = async (req, res, next) => {
   try {
     const user = await userService.getUserById(req.params.id);
@@ -118,7 +110,7 @@ export const getUserByIdController = async (req, res, next) => {
       data: user,
     });
   } catch (error) {
-    next(error);
+    handleControllerError(error, next);
   }
 };
 
@@ -134,7 +126,24 @@ export const updateUserController = async (req, res, next) => {
       data: user,
     });
   } catch (error) {
-    next(error);
+    handleControllerError(error, next);
+  }
+};
+
+export const deleteUser = async (req, res, next) => {
+  try {
+    const deletedUser = await userService.deleteUser(
+      req.params.id
+    );
+
+    appSuccess(res, {
+      message: "User deleted successfully",
+      data: {
+        deleted: deletedUser,
+      },
+    });
+  } catch (error) {
+    handleControllerError(error, next);
   }
 };
 
@@ -152,8 +161,10 @@ export const deactivateUserController = async (
       message: result.message,
     });
   } catch (error) {
-    next(error);
+    handleControllerError(error, next);
   }
 };
 
-export { createUserController as createUser, getUserByIdController as getUserById, updateUserController as updateUser };
+export const createUser = createUserController;
+export const getUserById = getUserByIdController;
+export const updateUser = updateUserController;
