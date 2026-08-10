@@ -1,133 +1,237 @@
 import csv from "csv-parser";
-import fs from "fs";
+import { Readable } from "stream";
 
 import Coupon from "../models/couponModel.js";
 import ImportJob from "../models/importJobModel.js";
-import { IMPORT_STATUS } from "../config/constants.js";
 
-export const importCoupons = async (file, adminId) => {
-  const job = await ImportJob.create({
-    fileName: file.originalname,
-    uploadedBy: adminId,
-    status: IMPORT_STATUS.PROCESSING,
-  });
+export const importCoupons = async (file, userId) => {
+  if (!file) {
+    throw new Error("CSV file is required");
+  }
+
+  const rows = [];
+
+  const stream = Readable.from(file.buffer);
 
   return new Promise((resolve, reject) => {
-    const coupons = [];
-
-    fs.createReadStream(file.path)
+    stream
       .pipe(csv())
       .on("data", (row) => {
-        coupons.push(row);
+        rows.push(row);
       })
       .on("end", async () => {
         try {
-          job.totalRows = coupons.length;
-
-          let processedRows = 0;
-          let successRows = 0;
-          let failedRows = 0;
-
+          let imported = 0;
+          let failed = 0;
           const errors = [];
 
-          for (let i = 0; i < coupons.length; i++) {
-            const row = coupons[i];
+          const importJob = await ImportJob.create({
+            fileName: file.originalname,
+            uploadedBy: userId,
+            status: "PROCESSING",
+            totalRows: rows.length,
+            processedRows: 0,
+            successRows: 0,
+            failedRows: 0,
+            startedAt: new Date(),
+          });
 
-            processedRows++;
+          for (let index = 0; index < rows.length; index++) {
+            const row = rows[index];
 
             try {
-              if (!row.code) {
-                failedRows++;
+              const code = row.code?.trim().toUpperCase();
 
-                errors.push({
-                  row: i + 1,
-                  reason: "Coupon code is missing",
-                });
+              const description =
+                row.description?.trim() || "";
 
-                continue;
+              const discountType =
+                row.discountType?.trim().toUpperCase();
+
+              const discountValue =
+                Number(row.discountValue);
+
+              const maxDiscount =
+                row.maxDiscount?.trim()
+                  ? Number(row.maxDiscount)
+                  : null;
+
+              const usageLimit =
+                Number(row.usageLimit);
+
+              const perCustomerLimit =
+                Number(row.perCustomerLimit);
+
+              const startDate =
+                new Date(row.startDate);
+
+              const expiryDate =
+                new Date(row.expiryDate);
+
+              if (!code) {
+                throw new Error(
+                  "Coupon code is required"
+                );
+              }
+
+              if (
+                !["PERCENTAGE", "FIXED"].includes(
+                  discountType
+                )
+              ) {
+                throw new Error(
+                  "Discount type must be PERCENTAGE or FIXED"
+                );
+              }
+
+              if (
+                !Number.isFinite(discountValue) ||
+                discountValue < 1
+              ) {
+                throw new Error(
+                  "Invalid discount value"
+                );
+              }
+
+              if (
+                !Number.isFinite(usageLimit) ||
+                usageLimit < 1
+              ) {
+                throw new Error(
+                  "Invalid usage limit"
+                );
+              }
+
+              if (
+                !Number.isFinite(
+                  perCustomerLimit
+                ) ||
+                perCustomerLimit < 1
+              ) {
+                throw new Error(
+                  "Invalid per customer limit"
+                );
+              }
+
+              if (
+                perCustomerLimit > usageLimit
+              ) {
+                throw new Error(
+                  "Per customer limit cannot exceed usage limit"
+                );
+              }
+
+              if (
+                Number.isNaN(startDate.getTime())
+              ) {
+                throw new Error(
+                  "Invalid start date"
+                );
+              }
+
+              if (
+                Number.isNaN(expiryDate.getTime())
+              ) {
+                throw new Error(
+                  "Invalid expiry date"
+                );
+              }
+
+              if (startDate >= expiryDate) {
+                throw new Error(
+                  "Expiry date must be after start date"
+                );
               }
 
               const exists = await Coupon.findOne({
-                code: row.code.toUpperCase(),
+                code,
                 isDeleted: false,
               });
 
               if (exists) {
-                failedRows++;
-
-                errors.push({
-                  row: i + 1,
-                  reason: "Coupon already exists",
-                });
-
-                continue;
+                throw new Error(
+                  "Coupon already exists"
+                );
               }
 
               await Coupon.create({
-                code: row.code.toUpperCase(),
-                description: row.description || "",
-                discountType: row.discountType,
-                discountValue: Number(row.discountValue),
-                maxDiscount: row.maxDiscount
-                  ? Number(row.maxDiscount)
-                  : null,
-                usageLimit: Number(row.usageLimit),
-                perCustomerLimit: Number(row.perCustomerLimit),
-                startDate: new Date(row.startDate),
-                expiryDate: new Date(row.expiryDate),
-                createdBy: adminId,
+                code,
+                description,
+                discountType,
+                discountValue,
+                maxDiscount,
+                usageLimit,
+                perCustomerLimit,
+                startDate,
+                expiryDate,
+                createdBy: userId,
               });
 
-              successRows++;
-            } catch (err) {
-              failedRows++;
+              imported++;
+            } catch (error) {
+              failed++;
 
               errors.push({
-                row: i + 1,
-                reason: err.message,
+                row: index + 2,
+                code: row.code || "",
+                reason: error.message,
               });
             }
+
+            await ImportJob.findByIdAndUpdate(
+              importJob._id,
+              {
+                processedRows: index + 1,
+                successRows: imported,
+                failedRows: failed,
+              }
+            );
           }
 
-          job.processedRows = processedRows;
-          job.successRows = successRows;
-          job.failedRows = failedRows;
-          job.errors = errors;
-          job.completedAt = new Date();
-          job.status = IMPORT_STATUS.COMPLETED;
+          const finalStatus =
+            failed === rows.length
+              ? "FAILED"
+              : "COMPLETED";
 
-          await job.save();
+          await ImportJob.findByIdAndUpdate(
+            importJob._id,
+            {
+              status: finalStatus,
+              processedRows: rows.length,
+              successRows: imported,
+              failedRows: failed,
+              ValidationErrors: errors.map(
+                (error) => ({
+                  row: error.row,
+                  reason: error.reason,
+                })
+              ),
+              completedAt: new Date(),
+            }
+          );
 
-          // Delete uploaded file after processing
-          fs.unlink(file.path, () => {});
-
-          resolve(job);
-        } catch (err) {
-          job.status = IMPORT_STATUS.FAILED;
-          job.completedAt = new Date();
-
-          await job.save();
-
-          fs.unlink(file.path, () => {});
-
-          reject(err);
+          resolve({
+            importJobId: importJob._id,
+            totalRows: rows.length,
+            imported,
+            failed,
+            errors,
+          });
+        } catch (error) {
+          reject(error);
         }
       })
-      .on("error", async (err) => {
-        job.status = IMPORT_STATUS.FAILED;
-        job.completedAt = new Date();
-
-        await job.save();
-
-        fs.unlink(file.path, () => {});
-
-        reject(err);
-      });
+      .on("error", reject);
   });
 };
 
 export const getImportJobs = async () => {
-  return await ImportJob.find()
-    .populate("uploadedBy", "name email")
-    .sort({ createdAt: -1 });
+  return ImportJob.find()
+    .populate(
+      "uploadedBy",
+      "name email role"
+    )
+    .sort({
+      createdAt: -1,
+    });
 };

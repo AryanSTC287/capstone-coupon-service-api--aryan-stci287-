@@ -1,8 +1,12 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import { USER_ROLE, USER_STATUS } from "../config/constants.js";
+import {
+  USER_ROLE,
+  USER_STATUS,
+} from "../config/constants.js";
 
 const { Schema, model } = mongoose;
+
 
 const userSchema = new Schema(
   {
@@ -18,7 +22,10 @@ const userSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email"],
+      match: [
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        "Please provide a valid email",
+      ],
     },
 
     password: {
@@ -51,19 +58,32 @@ const userSchema = new Schema(
   }
 );
 
+
 // Hash password before saving
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password")) {
+    return next();
+  }
 
-  this.password = await bcrypt.hash(this.password, 12);
+  this.password = await bcrypt.hash(
+    this.password,
+    12
+  );
 
   next();
 });
 
+
 // Compare entered password with hashed password
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.comparePassword = async function (
+  candidatePassword
+) {
+  return bcrypt.compare(
+    candidatePassword,
+    this.password
+  );
 };
+
 
 const User = model("User", userSchema);
 

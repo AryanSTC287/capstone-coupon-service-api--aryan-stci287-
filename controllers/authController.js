@@ -3,12 +3,16 @@ import {
   refreshAccessToken,
   logout,
   getCurrentUser,
+  updateCurrentUser,
+  updateCurrentUserPassword,
 } from "../services/authService.js";
 
-
-// POST /api/v1/auth/login
- 
-export const loginController = async (req, res, next) => {
+// POST /api/auth/login
+export const loginController = async (
+  req,
+  res,
+  next
+) => {
   try {
     const result = await login(req.body);
 
@@ -22,18 +26,22 @@ export const loginController = async (req, res, next) => {
   }
 };
 
-
-// POST /api/v1/auth/refresh-token
- 
-export const refreshTokenController = async (req, res, next) => {
+// POST /api/auth/refresh-token
+export const refreshTokenController = async (
+  req,
+  res,
+  next
+) => {
   try {
     const { refreshToken } = req.body;
 
-    const result = await refreshAccessToken(refreshToken);
+    const result =
+      await refreshAccessToken(refreshToken);
 
     res.status(200).json({
       success: true,
-      message: "Access token refreshed successfully",
+      message:
+        "Access token refreshed successfully",
       data: result,
     });
   } catch (error) {
@@ -41,10 +49,12 @@ export const refreshTokenController = async (req, res, next) => {
   }
 };
 
-/**
- * POST /api/v1/auth/logout
- */
-export const logoutController = async (req, res, next) => {
+// POST /api/auth/logout
+export const logoutController = async (
+  req,
+  res,
+  next
+) => {
   try {
     const { refreshToken } = req.body;
 
@@ -59,15 +69,71 @@ export const logoutController = async (req, res, next) => {
   }
 };
 
-
- // GET /api/v1/auth/me
-export const getCurrentUserController = async (req, res, next) => {
+// GET /api/auth/me
+export const getCurrentUserController = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const user = await getCurrentUser(req.user.id);
+    const user = await getCurrentUser(
+      req.user.id
+    );
 
     res.status(200).json({
       success: true,
+      message:
+        "Current user fetched successfully",
       data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// PATCH /api/auth/me
+export const updateCurrentUserController = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const user = await updateCurrentUser(
+      req.user.id,
+      req.body
+    );
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Profile updated successfully",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const updateCurrentUserPasswordController = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const {
+      currentPassword,
+      newPassword,
+    } = req.body;
+
+    const result =
+      await updateCurrentUserPassword(
+        req.user.id,
+        currentPassword,
+        newPassword
+      );
+
+    res.status(200).json({
+      success: true,
+      message: result.message,
     });
   } catch (error) {
     next(error);

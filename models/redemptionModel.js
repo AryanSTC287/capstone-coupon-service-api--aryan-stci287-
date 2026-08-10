@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
-import { REDEMPTION_STATUS } from "../config/constants.js";
+import {
+  REDEMPTION_STATUS,
+} from "../config/constants.js";
 
 const { Schema, model } = mongoose;
 
@@ -19,13 +21,13 @@ const redemptionSchema = new Schema(
 
     orderId: {
       type: String,
-      required: true,
+      required: [true, "Order ID is required"],
       trim: true,
     },
 
     idempotencyKey: {
       type: String,
-      required: true,
+      required: [true, "Idempotency key is required"],
       unique: true,
       trim: true,
     },
@@ -58,12 +60,31 @@ const redemptionSchema = new Schema(
   }
 );
 
-// Indexes
-redemptionSchema.index({ coupon: 1 });
-redemptionSchema.index({ customer: 1 });
-redemptionSchema.index({ orderId: 1 });
-redemptionSchema.index({ createdAt: -1 });
+// Same order cannot be redeemed again.
+redemptionSchema.index(
+  {
+    orderId: 1,
+  },
+  {
+    unique: true,
+  }
+);
 
-const Redemption = model("Redemption", redemptionSchema);
+redemptionSchema.index({
+  coupon: 1,
+});
+
+redemptionSchema.index({
+  customer: 1,
+});
+
+redemptionSchema.index({
+  createdAt: -1,
+});
+
+const Redemption = model(
+  "Redemption",
+  redemptionSchema
+);
 
 export default Redemption;

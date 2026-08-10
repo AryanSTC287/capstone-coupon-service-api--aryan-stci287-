@@ -5,17 +5,14 @@ import {
   revertRedemptionController,
 } from "../../controllers/redemptionController.js";
 
-
 import {
   verifyToken,
   authorize,
 } from "../../middlewares/auth.js";
 
-
 import {
   validate,
 } from "../../middlewares/validations.js";
-
 
 import {
   revertRedemptionSchema,
@@ -25,11 +22,11 @@ import {
 const router = express.Router();
 
 
-// Admin Authentication
+// Admin authentication
 router.use(verifyToken);
 
 
-// Get All Redemptions
+// Get all redemptions
 router.get(
   "/",
   authorize("ADMIN"),
@@ -37,7 +34,7 @@ router.get(
 );
 
 
-// Revert Redemption
+// Revert redemption
 router.patch(
   "/:id/revert",
   authorize("ADMIN"),

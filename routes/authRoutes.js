@@ -5,6 +5,8 @@ import {
   refreshTokenController,
   logoutController,
   getCurrentUserController,
+  updateCurrentUserController,
+  updateCurrentUserPasswordController,
 } from "../controllers/authController.js";
 
 import { verifyToken } from "../middlewares/auth.js";
@@ -34,7 +36,7 @@ router.post(
 // POST /api/auth/logout
 router.post(
   "/logout",
-  validateRequest(refreshTokenSchema), // Remove if using cookies only
+  validateRequest(refreshTokenSchema),
   logoutController
 );
 
@@ -43,6 +45,18 @@ router.get(
   "/me",
   verifyToken,
   getCurrentUserController
+);
+
+// PATCH /api/auth/me
+router.patch(
+  "/me",
+  verifyToken,
+  updateCurrentUserController
+);
+router.patch(
+  "/me/password",
+  verifyToken,
+  updateCurrentUserPasswordController
 );
 
 export default router;

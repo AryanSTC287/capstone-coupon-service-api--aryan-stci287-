@@ -2,7 +2,6 @@ import express from "express";
 
 import authRoutes from "./authRoutes.js";
 
-// Admin Routes
 import auditLogRoutes from "./admin/auditLogRoutes.js";
 import userRoutes from "./admin/userRoutes.js";
 import couponRoutes from "./admin/couponRoutes.js";
@@ -11,36 +10,66 @@ import analyticsRoutes from "./admin/analyticsRoutes.js";
 import productRoutes from "./admin/productRoutes.js";
 import adminRedemptionRoutes from "./admin/redemptionRoutes.js";
 
-// Customer Routes
 import customerRedemptionRoutes from "./customer/redemptionRoutes.js";
+import customerCouponRoutes from "./customer/couponRoutes.js";
+
 import publicProductRoutes from "./public/productRoutes.js";
 
 const router = express.Router();
 
+router.use(
+  "/auth",
+  authRoutes
+);
 
-// Auth
-router.use("/auth", authRoutes);
+router.use(
+  "/admin/users",
+  userRoutes
+);
 
+router.use(
+  "/admin/coupons",
+  couponRoutes
+);
 
-// Admin
-router.use("/admin/users", userRoutes);
+router.use(
+  "/admin/import",
+  importRoutes
+);
 
-router.use("/admin/coupons", couponRoutes);
+router.use(
+  "/admin/analytics",
+  analyticsRoutes
+);
 
-router.use("/admin/import", importRoutes);
+router.use(
+  "/admin/products",
+  productRoutes
+);
 
-router.use("/admin/analytics", analyticsRoutes);
+router.use(
+  "/admin/redemptions",
+  adminRedemptionRoutes
+);
 
-router.use("/admin/products", productRoutes);
+router.use(
+  "/admin/audit-logs",
+  auditLogRoutes
+);
 
-router.use("/admin/redemptions", adminRedemptionRoutes);
+router.use(
+  "/public/products",
+  publicProductRoutes
+);
 
-router.use("/admin/audit-logs", auditLogRoutes);
+router.use(
+  "/customer",
+  customerRedemptionRoutes
+);
 
-// Public
-router.use("/public/products", publicProductRoutes);
-
-// Customer
-router.use("/customer", customerRedemptionRoutes);
+router.use(
+  "/customer/coupons",
+  customerCouponRoutes
+);
 
 export default router;

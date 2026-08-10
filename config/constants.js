@@ -1,4 +1,3 @@
-//CORS
 export const allowedOrigins = {
   development: [
     "https://dev.domain.com",
@@ -29,32 +28,38 @@ export const allowedOrigins = {
     "https://www.domain.com/",
   ],
 };
+
+
 export const userRefreshTokenPath =
   "/api/users/auth/update-refresh-access";
 
-//USER
+
+// User
 export const USER_ROLE = {
   ADMIN: "ADMIN",
   CUSTOMER: "CUSTOMER",
-  SUPPORT: "SUPPORT",
-  SYSTEM: "SYSTEM",
 };
+
 
 export const USER_STATUS = {
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",
 };
+
+
 // Coupon
 export const DISCOUNT_TYPE = {
   PERCENTAGE: "PERCENTAGE",
   FIXED: "FIXED",
 };
 
+
 export const COUPON_STATUS = {
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",
   EXPIRED: "EXPIRED",
 };
+
 
 // Bulk CSV Import Status
 export const IMPORT_STATUS = {
@@ -63,23 +68,31 @@ export const IMPORT_STATUS = {
   COMPLETED: "COMPLETED",
   FAILED: "FAILED",
 };
+
+
 // Redemption
 export const REDEMPTION_STATUS = {
   SUCCESS: "SUCCESS",
   FAILED: "FAILED",
   REVERTED: "REVERTED",
 };
+
+
 // Pagination
 export const PAGINATION = {
   DEFAULT_PAGE: 1,
   DEFAULT_LIMIT: 10,
   MAX_LIMIT: 100,
 };
+
+
 // Sorting
 export const SORT_ORDER = {
   ASC: "asc",
   DESC: "desc",
 };
+
+
 // Analytics
 export const ANALYTICS_PERIOD = {
   TODAY: "TODAY",
@@ -87,22 +100,26 @@ export const ANALYTICS_PERIOD = {
   MONTH: "MONTH",
   YEAR: "YEAR",
 };
+
+
 // CSV Import
 export const CSV_HEADERS = [
   "code",
-  "title",
   "description",
   "discountType",
   "discountValue",
   "maxDiscount",
-  "minOrderValue",
   "usageLimit",
+  "perCustomerLimit",
   "startDate",
   "expiryDate",
 ];
+
+
 // File Upload
 export const ALLOWED_FILE_TYPES = [
   "text/csv",
   "application/vnd.ms-excel",
 ];
-export const MAX_CSV_SIZE = 5 * 1024 * 1024; // 5MB
+
+export const MAX_CSV_SIZE = 5 * 1024 * 1024;
