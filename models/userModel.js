@@ -7,7 +7,6 @@ import {
 
 const { Schema, model } = mongoose;
 
-
 const userSchema = new Schema(
   {
     name: {
@@ -26,6 +25,12 @@ const userSchema = new Schema(
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         "Please provide a valid email",
       ],
+    },
+
+    phone: {
+      type: String,
+      required: [true, "Phone number is required"],
+      trim: true,
     },
 
     password: {
@@ -58,8 +63,6 @@ const userSchema = new Schema(
   }
 );
 
-
-// Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
@@ -73,8 +76,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-
-// Compare entered password with hashed password
 userSchema.methods.comparePassword = async function (
   candidatePassword
 ) {
@@ -83,7 +84,6 @@ userSchema.methods.comparePassword = async function (
     this.password
   );
 };
-
 
 const User = model("User", userSchema);
 
