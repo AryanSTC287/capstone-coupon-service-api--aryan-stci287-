@@ -4,10 +4,13 @@ import {
   USER_STATUS,
 } from "../../config/constants.js";
 
-
 export const createUserSchema = Joi.object({
+  firstName: Joi.string()
+    .trim()
+    .min(2)
+    .required(),
 
-  name: Joi.string()
+  lastName: Joi.string()
     .trim()
     .min(2)
     .required(),
@@ -15,6 +18,10 @@ export const createUserSchema = Joi.object({
   email: Joi.string()
     .email()
     .lowercase()
+    .required(),
+
+  phone: Joi.string()
+    .trim()
     .required(),
 
   password: Joi.string()
@@ -28,13 +35,15 @@ export const createUserSchema = Joi.object({
   status: Joi.string()
     .valid(...Object.values(USER_STATUS))
     .default(USER_STATUS.ACTIVE),
-
 });
 
-
 export const updateUserSchema = Joi.object({
+  firstName: Joi.string()
+    .trim()
+    .min(2)
+    .optional(),
 
-  name: Joi.string()
+  lastName: Joi.string()
     .trim()
     .min(2)
     .optional(),
@@ -44,6 +53,14 @@ export const updateUserSchema = Joi.object({
     .lowercase()
     .optional(),
 
+  phone: Joi.string()
+    .trim()
+    .optional(),
+
+  password: Joi.string()
+    .min(6)
+    .optional(),
+
   role: Joi.string()
     .valid(...Object.values(USER_ROLE))
     .optional(),
@@ -51,6 +68,4 @@ export const updateUserSchema = Joi.object({
   status: Joi.string()
     .valid(...Object.values(USER_STATUS))
     .optional(),
-
-})
-.min(1);
+}).min(1);
