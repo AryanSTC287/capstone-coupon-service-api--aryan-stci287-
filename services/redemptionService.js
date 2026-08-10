@@ -24,30 +24,21 @@ export const redeemCoupon = async (payload) => {
     orderAmount = 0,
   } = payload;
 
-  if (
-    !couponCode ||
-    !couponCode.trim()
-  ) {
+  if (!couponCode || !couponCode.trim()) {
     throw new AppError(
       "Coupon code is required",
       400
     );
   }
 
-  if (
-    !orderId ||
-    !orderId.trim()
-  ) {
+  if (!orderId || !orderId.trim()) {
     throw new AppError(
       "Order ID is required",
       400
     );
   }
 
-  if (
-    !idempotencyKey ||
-    !idempotencyKey.trim()
-  ) {
+  if (!idempotencyKey || !idempotencyKey.trim()) {
     throw new AppError(
       "Idempotency key is required",
       400
@@ -69,14 +60,7 @@ export const redeemCoupon = async (payload) => {
     normalizedOrderAmount < 0
   ) {
     throw new AppError(
-      "Order amount cannot be negative",
-      400
-    );
-  }
-
-  if (normalizedOrderAmount <= 0) {
-    throw new AppError(
-      "Order amount must be greater than 0",
+      "Order amount must be a valid non-negative number",
       400
     );
   }
@@ -116,7 +100,7 @@ export const redeemCoupon = async (payload) => {
         }
 
         /*
-         * Find Coupon
+         * Find coupon
          */
         const coupon =
           await Coupon.findOne({
@@ -132,7 +116,7 @@ export const redeemCoupon = async (payload) => {
         }
 
         /*
-         * Coupon Status
+         * Coupon status
          */
         if (
           coupon.status !==
@@ -148,7 +132,7 @@ export const redeemCoupon = async (payload) => {
           new Date();
 
         /*
-         * Start Date
+         * Start date
          */
         if (
           currentDate <
@@ -174,7 +158,7 @@ export const redeemCoupon = async (payload) => {
         }
 
         /*
-         * Lock Customer Document
+         * Lock customer document
          */
         const customer =
           await User.findOneAndUpdate(
@@ -225,14 +209,7 @@ export const redeemCoupon = async (payload) => {
 
         /*
          * Gate 3B:
-         * Global Order ID Idempotency
-         *
-         * Order ID belongs to the order,
-         * not to the coupon.
-         *
-         * The same order cannot use
-         * another coupon after it has
-         * already been redeemed.
+         * Order ID must be unique
          */
         const existingOrderRedemption =
           await Redemption.findOne({
@@ -248,7 +225,7 @@ export const redeemCoupon = async (payload) => {
         }
 
         /*
-         * Calculate Discount
+         * Calculate discount
          */
         let discountAmount =
           Number(
@@ -292,10 +269,6 @@ export const redeemCoupon = async (payload) => {
         /*
          * Gate 1:
          * Global Usage Limit
-         *
-         * Atomic update guarantees
-         * usedCount never exceeds
-         * usageLimit.
          */
         const updatedCoupon =
           await Coupon.findOneAndUpdate(
@@ -304,7 +277,6 @@ export const redeemCoupon = async (payload) => {
               isDeleted: false,
               status:
                 COUPON_STATUS.ACTIVE,
-
               $expr: {
                 $lt: [
                   "$usedCount",
@@ -372,7 +344,7 @@ export const redeemCoupon = async (payload) => {
     );
 
     /*
-     * Populate Response
+     * Populate response
      */
     await redemption.populate(
       "coupon"
@@ -386,15 +358,12 @@ export const redeemCoupon = async (payload) => {
     return redemption;
   } catch (error) {
     /*
-     * MongoDB Duplicate Key Protection
+     * MongoDB duplicate key protection
      */
     if (error?.code === 11000) {
       const duplicateFields =
         error?.keyPattern || {};
 
-      /*
-       * Idempotency Key Duplicate
-       */
       if (
         duplicateFields.idempotencyKey
       ) {
@@ -419,10 +388,17 @@ export const redeemCoupon = async (payload) => {
         );
       }
 
-      /*
-       * Order ID Duplicate
-       */
       if (
+        duplicateFields.orderId
+      ) {
+        throw new AppError(
+          "This order has already been redeemed",
+          409
+        );
+      }
+
+      if (
+        duplicateFields.coupon &&
         duplicateFields.orderId
       ) {
         throw new AppError(
@@ -523,9 +499,6 @@ export const revertRedemption =
             );
           }
 
-          /*
-           * Mark Redemption Reverted
-           */
           redemption.status =
             REDEMPTION_STATUS.REVERTED;
 
@@ -539,9 +512,6 @@ export const revertRedemption =
             session,
           });
 
-          /*
-           * Decrease Coupon Counters
-           */
           const updatedCoupon =
             await Coupon.findOneAndUpdate(
               {

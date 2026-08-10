@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 import {
   REDEMPTION_STATUS,
 } from "../config/constants.js";
@@ -23,6 +24,12 @@ const redemptionSchema = new Schema(
       type: String,
       required: [true, "Order ID is required"],
       trim: true,
+    },
+
+    orderAmount: {
+      type: Number,
+      required: [true, "Order amount is required"],
+      min: 0,
     },
 
     idempotencyKey: {
@@ -60,9 +67,9 @@ const redemptionSchema = new Schema(
   }
 );
 
-// Same order cannot be redeemed again.
 redemptionSchema.index(
   {
+    coupon: 1,
     orderId: 1,
   },
   {
@@ -76,6 +83,10 @@ redemptionSchema.index({
 
 redemptionSchema.index({
   customer: 1,
+});
+
+redemptionSchema.index({
+  orderId: 1,
 });
 
 redemptionSchema.index({
