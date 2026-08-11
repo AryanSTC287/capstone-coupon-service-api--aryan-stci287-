@@ -6,6 +6,7 @@ import {
   getUserByIdController,
   updateUserController,
   deactivateUserController,
+  deleteUserController,
 } from "../../controllers/userController.js";
 
 import { verifyToken, authorize } from "../../middlewares/auth.js";
@@ -37,5 +38,7 @@ router.put(
 );
 
 router.patch("/:id/deactivate", deactivateUserController);
+
+router.delete("/:id", deleteUserController);
 
 export default router;

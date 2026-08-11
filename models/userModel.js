@@ -9,9 +9,15 @@ const { Schema, model } = mongoose;
 
 const userSchema = new Schema(
   {
-    name: {
+    firstName: {
       type: String,
-      required: [true, "Name is required"],
+      required: [true, "First name is required"],
+      trim: true,
+    },
+
+    lastName: {
+      type: String,
+      required: [true, "Last name is required"],
       trim: true,
     },
 
